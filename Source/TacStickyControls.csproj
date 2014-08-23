@@ -72,8 +72,7 @@
   <PropertyGroup>
     <!-- Needed for the WriteAvcVersion build target -->
     <ModName>TAC Sticky Controls</ModName>
-    <ModUrl>
-    </ModUrl>
+    <ModUrl>http://ksp-avc.cybutek.net/version.php?id=21</ModUrl>
     <DownloadUrl>
     </DownloadUrl>
     <KspVersionMajor>0</KspVersionMajor>
