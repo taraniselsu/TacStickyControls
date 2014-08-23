@@ -20,7 +20,7 @@ namespace Tac
     internal class InstallChecker : MonoBehaviour
     {
         private const string modName = "TAC Sticky Controls";
-        private const string expectedPath = "ThunderAerospace/TacStickyControls";
+        private const string expectedPath = "TacStickyControls";
 
         protected void Start()
         {

@@ -34,11 +34,10 @@ Source code can be found at https://github.com/taraniselsu/TacStickyControls
 - Unzip to the KSP directory.
 
 The following files should be in the given locations:
-{KSP}/GameData/ThunderAerospace/TacStickyControls/TacStickyControls.dll
-{KSP}/GameData/ThunderAerospace/TacStickyControls/PluginData/TacStickyControls/resize.png
+{KSP}/GameData/TacStickyControls/TacStickyControls.dll
 
 The following file will be created after launching your first spacecraft:
-{KSP}/GameData/ThunderAerospace/TacStickyControls/PluginData/TacStickyControls/StickyControls.cfg
+{KSP}/GameData/TacStickyControls/PluginData/TacStickyControls/StickyControls.cfg
 
 
 
