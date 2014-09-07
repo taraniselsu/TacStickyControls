@@ -3,7 +3,7 @@
  * 
  * Thunder Aerospace Corporation's Flight Computer for the Kerbal Space Program, by Taranis Elsu
  * 
- * (C) Copyright 2013, Taranis Elsu
+ * (C) Copyright 2014, Taranis Elsu
  * 
  * Kerbal Space Program is Copyright (C) 2013 Squad. See http://kerbalspaceprogram.com/. This
  * project is in no way associated with nor endorsed by Squad.
@@ -23,46 +23,37 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Tac
+namespace Tac.StickyControls
 {
     [KSPAddon(KSPAddon.Startup.Flight, false)]
-    class StickyControls : MonoBehaviour
+    public class StickyControls : MonoBehaviour
     {
+        private Settings settings = new Settings();
         private string configFilename;
         private MainWindow window;
 
         private Vessel currentVessel = null;
 
-        internal float Yaw { get; private set; }
-        internal float Pitch { get; private set; }
-        internal float Roll { get; private set; }
-
-        internal float Speed { get; set; }
-        internal float Step { get; set; }
-        internal float PrecisionControlsModifier { get; set; }
-        internal string ZeroControlsKey { get; set; }
-        internal bool Enabled { get; set; }
+        private ControlAxis yaw;
+        private ControlAxis pitch;
+        private ControlAxis roll;
 
         private const string lockName = "TacStickyControls";
         private const ControlTypes desiredLock = ControlTypes.YAW | ControlTypes.PITCH | ControlTypes.ROLL;
 
-        StickyControls()
+        public StickyControls()
         {
             this.Log("Constructor");
+            configFilename = IOUtils.GetFilePathFor(this.GetType(), "StickyControls.cfg");
+            window = new MainWindow(this, settings);
+            yaw = new ControlAxis(GameSettings.YAW_LEFT, GameSettings.YAW_RIGHT, settings);
+            pitch = new ControlAxis(GameSettings.PITCH_DOWN, GameSettings.PITCH_UP, settings);
+            roll = new ControlAxis(GameSettings.ROLL_LEFT, GameSettings.ROLL_RIGHT, settings);
         }
 
         void Awake()
         {
             this.Log("Awake");
-            configFilename = IOUtils.GetFilePathFor(this.GetType(), "StickyControls.cfg");
-            window = new MainWindow(this);
-
-            // Set defaults
-            Speed = 1.0f;
-            Step = 0.1f;
-            PrecisionControlsModifier = 0.1f;
-            ZeroControlsKey = "z";
-            Enabled = true;
         }
 
         void Start()
@@ -121,9 +112,9 @@ namespace Tac
                     currentVessel = FlightGlobals.ActiveVessel;
                     Register(currentVessel);
 
-                    Yaw = 0;
-                    Pitch = 0;
-                    Roll = 0;
+                    yaw.Zero();
+                    pitch.Zero();
+                    roll.Zero();
                 }
                 else
                 {
@@ -136,18 +127,18 @@ namespace Tac
                         }
                     }
 
-                    if (Input.GetKeyDown(ZeroControlsKey))
+                    if (Input.GetKeyDown(settings.ZeroControlsKey) && !Input.GetKey(KeyCode.LeftAlt) && !Input.GetKey(KeyCode.RightAlt))
                     {
-                        Yaw = 0;
-                        Pitch = 0;
-                        Roll = 0;
+                        yaw.Zero();
+                        pitch.Zero();
+                        roll.Zero();
                     }
 
-                    if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(ZeroControlsKey))
+                    if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(settings.ZeroControlsKey))
                     {
-                        Enabled = !Enabled;
+                        settings.Enabled = !settings.Enabled;
 
-                        if (Enabled)
+                        if (settings.Enabled)
                         {
                             if (InputLockManager.GetControlLock(lockName) != desiredLock)
                             {
@@ -163,63 +154,11 @@ namespace Tac
                         }
                     }
 
-                    if (Enabled && !Input.GetKey(KeyCode.LeftAlt) && !Input.GetKey(KeyCode.RightAlt))
+                    if (settings.Enabled)
                     {
-                        float modifier = (FlightInputHandler.fetch.precisionMode) ? PrecisionControlsModifier : 1.0f;
-
-                        if (GameSettings.YAW_LEFT.GetKey())
-                        {
-                            Yaw = Math.Max(Yaw - (Speed * Time.deltaTime * modifier), -1.0f);
-                        }
-                        if (GameSettings.YAW_LEFT.GetKeyUp())
-                        {
-                            Yaw = Math.Max(RoundDown(Yaw, Step * modifier), -1.0f);
-                        }
-
-                        if (GameSettings.YAW_RIGHT.GetKey())
-                        {
-                            Yaw = Math.Min(Yaw + (Speed * Time.deltaTime * modifier), 1.0f);
-                        }
-                        if (GameSettings.YAW_RIGHT.GetKeyUp())
-                        {
-                            Yaw = Math.Min(RoundUp(Yaw, Step * modifier), 1.0f);
-                        }
-
-                        if (GameSettings.PITCH_UP.GetKey())
-                        {
-                            Pitch = Math.Min(Pitch + (Speed * Time.deltaTime * modifier), 1.0f);
-                        }
-                        if (GameSettings.PITCH_UP.GetKeyUp())
-                        {
-                            Pitch = Math.Min(RoundUp(Pitch, Step * modifier), 1.0f);
-                        }
-
-                        if (GameSettings.PITCH_DOWN.GetKey())
-                        {
-                            Pitch = Math.Max(Pitch - (Speed * Time.deltaTime * modifier), -1.0f);
-                        }
-                        if (GameSettings.PITCH_DOWN.GetKey())
-                        {
-                            Pitch = Math.Max(RoundDown(Pitch, Step * modifier), -1.0f);
-                        }
-
-                        if (GameSettings.ROLL_LEFT.GetKey())
-                        {
-                            Roll = Math.Max(Roll - (Speed * Time.deltaTime * modifier), -1.0f);
-                        }
-                        if (GameSettings.ROLL_LEFT.GetKey())
-                        {
-                            Roll = Math.Max(RoundDown(Roll, Step * modifier), -1.0f);
-                        }
-
-                        if (GameSettings.ROLL_RIGHT.GetKey())
-                        {
-                            Roll = Math.Min(Roll + (Speed * Time.deltaTime * modifier), 1.0f);
-                        }
-                        if (GameSettings.ROLL_RIGHT.GetKeyUp())
-                        {
-                            Roll = Math.Min(RoundUp(Roll, Step * modifier), 1.0f);
-                        }
+                        yaw.Update();
+                        pitch.Update();
+                        roll.Update();
                     }
                 }
             }
@@ -231,12 +170,27 @@ namespace Tac
 
         private void StickyFlyByWire(FlightCtrlState state)
         {
-            if (Enabled && currentVessel != null)
+            if (settings.Enabled && currentVessel != null)
             {
-                state.yaw = Yaw;
-                state.pitch = Pitch;
-                state.roll = Roll;
+                state.yaw = yaw.GetValue();
+                state.pitch = pitch.GetValue();
+                state.roll = roll.GetValue();
             }
+        }
+
+        internal float GetYaw()
+        {
+            return yaw.GetValue();
+        }
+
+        internal float GetPitch()
+        {
+            return pitch.GetValue();
+        }
+
+        internal float GetRoll()
+        {
+            return roll.GetValue();
         }
 
         private void OnJustAboutToBeDestroyed()
@@ -249,12 +203,8 @@ namespace Tac
             if (File.Exists<StickyControls>(configFilename))
             {
                 ConfigNode config = ConfigNode.Load(configFilename);
+                settings.Load(config);
                 window.Load(config);
-                Speed = Utilities.GetValue(config, "Speed", Speed);
-                Step = Utilities.GetValue(config, "Step", Step);
-                Enabled = Utilities.GetValue(config, "Enabled", Enabled);
-                PrecisionControlsModifier = Utilities.GetValue(config, "PrecisionControlsModifier", PrecisionControlsModifier);
-                ZeroControlsKey = Utilities.GetValue(config, "ZeroControlsKey", ZeroControlsKey);
                 this.Log("Load: " + config);
             }
         }
@@ -262,25 +212,11 @@ namespace Tac
         private void Save()
         {
             ConfigNode config = new ConfigNode();
+            settings.Save(config);
             window.Save(config);
-            config.AddValue("Speed", Speed);
-            config.AddValue("Step", Step);
-            config.AddValue("Enabled", Enabled);
-            config.AddValue("PrecisionControlsModifier", PrecisionControlsModifier);
-            config.AddValue("ZeroControlsKey", ZeroControlsKey);
 
             config.Save(configFilename);
             this.Log("Save: " + config);
-        }
-
-        internal static float RoundUp(float value, float step)
-        {
-            return Mathf.Ceil(value / step) * step;
-        }
-
-        internal static float RoundDown(float value, float step)
-        {
-            return Mathf.Floor(value / step) * step;
         }
     }
 }

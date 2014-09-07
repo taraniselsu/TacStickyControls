@@ -3,7 +3,7 @@
  * 
  * Thunder Aerospace Corporation's Flight Computer for the Kerbal Space Program, by Taranis Elsu
  * 
- * (C) Copyright 2013, Taranis Elsu
+ * (C) Copyright 2014, Taranis Elsu
  * 
  * Kerbal Space Program is Copyright (C) 2013 Squad. See http://kerbalspaceprogram.com/. This
  * project is in no way associated with nor endorsed by Squad.
@@ -22,11 +22,12 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Tac
+namespace Tac.StickyControls
 {
-    class MainWindow : Window<MainWindow>
+    internal class MainWindow : Window<MainWindow>
     {
         private readonly StickyControls main;
+        private readonly Settings settings;
         private readonly string version;
 
         private GUIStyle labelStyle;
@@ -36,7 +37,7 @@ namespace Tac
 
         private bool showSettings = false;
 
-        internal MainWindow(StickyControls main)
+        internal MainWindow(StickyControls main, Settings settings)
             : base("TAC Sticky Controls", 155, 100)
         {
             base.HideCloseButton = true;
@@ -44,6 +45,7 @@ namespace Tac
             base.HideWhenPaused = false;
 
             this.main = main;
+            this.settings = settings;
             this.version = Utilities.GetDllVersion(this);
 
             this.Log(this.GetType().Assembly.Location);
@@ -82,7 +84,7 @@ namespace Tac
 
         protected override void DrawWindowContents(int windowId)
         {
-            main.Enabled = GUILayout.Toggle(main.Enabled, "Enabled");
+            settings.Enabled = GUILayout.Toggle(settings.Enabled, "Enabled");
 
             GUILayout.BeginHorizontal();
 
@@ -93,9 +95,9 @@ namespace Tac
             GUILayout.EndVertical();
 
             GUILayout.BeginVertical();
-            GUILayout.Label(main.Yaw.ToString("0.000"), valueStyle);
-            GUILayout.Label(main.Pitch.ToString("0.000"), valueStyle);
-            GUILayout.Label(main.Roll.ToString("0.000"), valueStyle);
+            GUILayout.Label(main.GetYaw().ToString("0.000"), valueStyle);
+            GUILayout.Label(main.GetPitch().ToString("0.000"), valueStyle);
+            GUILayout.Label(main.GetRoll().ToString("0.000"), valueStyle);
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();
@@ -112,34 +114,34 @@ namespace Tac
                 float newFloat;
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Speed", labelStyle, GUILayout.ExpandHeight(true));
-                if (float.TryParse(GUILayout.TextField(main.Speed.ToString("0.000"), GUILayout.ExpandWidth(true)), out newFloat))
+                if (float.TryParse(GUILayout.TextField(settings.Speed.ToString("0.000"), GUILayout.ExpandWidth(true)), out newFloat))
                 {
-                    main.Speed = newFloat;
+                    settings.Speed = newFloat;
                 }
                 GUILayout.EndHorizontal();
-                main.Speed = StickyControls.RoundUp(GUILayout.HorizontalSlider(main.Speed, 0.025f, 1.0f, GUILayout.ExpandWidth(true)), 0.025f);
+                settings.Speed = StickyUtilities.RoundUp(GUILayout.HorizontalSlider(settings.Speed, 0.025f, 1.0f, GUILayout.ExpandWidth(true)), 0.025f);
 
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Step", labelStyle, GUILayout.ExpandHeight(true));
-                if (float.TryParse(GUILayout.TextField(main.Step.ToString("0.000"), GUILayout.ExpandWidth(true)), out newFloat))
+                if (float.TryParse(GUILayout.TextField(settings.Step.ToString("0.000"), GUILayout.ExpandWidth(true)), out newFloat))
                 {
-                    main.Step = newFloat;
+                    settings.Step = newFloat;
                 }
                 GUILayout.EndHorizontal();
-                main.Step = StickyControls.RoundUp(GUILayout.HorizontalSlider(main.Step, 0.005f, 0.25f, GUILayout.ExpandWidth(true)), 0.005f);
+                settings.Step = StickyUtilities.RoundUp(GUILayout.HorizontalSlider(settings.Step, 0.005f, 0.25f, GUILayout.ExpandWidth(true)), 0.005f);
 
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Precision Controls Modifier", labelStyle, GUILayout.ExpandHeight(true));
-                if (float.TryParse(GUILayout.TextField(main.PrecisionControlsModifier.ToString("0.000"), GUILayout.ExpandWidth(true)), out newFloat))
+                if (float.TryParse(GUILayout.TextField(settings.PrecisionControlsModifier.ToString("0.000"), GUILayout.ExpandWidth(true)), out newFloat))
                 {
-                    main.PrecisionControlsModifier = newFloat;
+                    settings.PrecisionControlsModifier = newFloat;
                 }
                 GUILayout.EndHorizontal();
-                main.PrecisionControlsModifier = StickyControls.RoundUp(GUILayout.HorizontalSlider(main.PrecisionControlsModifier, 0.005f, 0.25f, GUILayout.ExpandWidth(true)), 0.005f);
+                settings.PrecisionControlsModifier = StickyUtilities.RoundUp(GUILayout.HorizontalSlider(settings.PrecisionControlsModifier, 0.005f, 0.25f, GUILayout.ExpandWidth(true)), 0.005f);
 
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Zero Controls key", labelStyle);
-                main.ZeroControlsKey = GUILayout.TextField(main.ZeroControlsKey, GUILayout.ExpandWidth(true));
+                settings.ZeroControlsKey = GUILayout.TextField(settings.ZeroControlsKey, GUILayout.ExpandWidth(true));
                 GUILayout.EndHorizontal();
 
                 GUILayout.Space(10);
