@@ -43,6 +43,9 @@ namespace Tac
         internal string ZeroControlsKey { get; set; }
         internal bool Enabled { get; set; }
 
+        private const string lockName = "TacStickyControls";
+        private const ControlTypes desiredLock = ControlTypes.YAW | ControlTypes.PITCH | ControlTypes.ROLL;
+
         StickyControls()
         {
             this.Log("Constructor");
@@ -77,6 +80,12 @@ namespace Tac
             if (currentVessel != null)
             {
                 Unregister(currentVessel);
+            }
+
+            // Make sure we remove our locks
+            if (InputLockManager.GetControlLock(lockName) == desiredLock)
+            {
+                InputLockManager.RemoveControlLock(lockName);
             }
         }
 
@@ -118,6 +127,15 @@ namespace Tac
                 }
                 else
                 {
+                    foreach (var entry in InputLockManager.lockStack)
+                    {
+                        if ((entry.Value & (ulong)desiredLock) != 0 && entry.Key != lockName)
+                        {
+                            // Something else locked out the controls, so do not accept any input
+                            return;
+                        }
+                    }
+
                     if (Input.GetKeyDown(ZeroControlsKey))
                     {
                         Yaw = 0;
@@ -128,6 +146,21 @@ namespace Tac
                     if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(ZeroControlsKey))
                     {
                         Enabled = !Enabled;
+
+                        if (Enabled)
+                        {
+                            if (InputLockManager.GetControlLock(lockName) != desiredLock)
+                            {
+                                InputLockManager.SetControlLock(desiredLock, lockName);
+                            }
+                        }
+                        else
+                        {
+                            if (InputLockManager.GetControlLock(lockName) == desiredLock)
+                            {
+                                InputLockManager.RemoveControlLock(lockName);
+                            }
+                        }
                     }
 
                     if (Enabled && !Input.GetKey(KeyCode.LeftAlt) && !Input.GetKey(KeyCode.RightAlt))
