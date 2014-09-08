@@ -27,6 +27,8 @@ namespace Tac.StickyControls
     internal class ControlAxis
     {
         private float value = 0.0f;
+        private float tempValue = 0.0f;
+        private float timeKeyDown = 0.0f;
         private KeyBinding decreaseKey;
         private KeyBinding increaseKey;
         private Settings settings;
@@ -42,27 +44,60 @@ namespace Tac.StickyControls
         {
             if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
+                // Ignore if the Alt key is held down, the user might be trying to set the trim
                 return;
             }
 
             float modifier = (FlightInputHandler.fetch.precisionMode) ? settings.PrecisionControlsModifier : 1.0f;
 
-            if (decreaseKey.GetKey())
+            if (decreaseKey.GetKeyDown())
             {
-                value = Math.Max(value - (settings.Speed * Time.deltaTime * modifier), -1.0f);
+                // the key was just pressed down
+                timeKeyDown = Time.time;
+                tempValue = value;
             }
-            if (decreaseKey.GetKeyUp())
+            else if (decreaseKey.GetKey())
             {
-                value = Math.Max(StickyUtilities.RoundDown(value, settings.Step * modifier), -1.0f);
+                float delta = Time.time - timeKeyDown;
+                if (delta < settings.MinTime)
+                {
+                    // Only move a single step
+                    float temp = tempValue - (settings.Step * modifier);
+                    value = Math.Max(temp, -1.0f);
+                }
+                else
+                {
+                    delta = Mathf.Pow(delta, settings.Exponent);
+
+                    float temp = tempValue - (settings.Speed * delta * modifier);
+                    temp = StickyUtilities.RoundDown(temp, settings.Step * modifier);
+                    value = Math.Max(temp, -1.0f);
+                }
             }
 
-            if (increaseKey.GetKey())
+            if (increaseKey.GetKeyDown())
             {
-                value = Math.Min(value + (settings.Speed * Time.deltaTime * modifier), 1.0f);
+                // the key was just pressed down
+                timeKeyDown = Time.time;
+                tempValue = value;
             }
-            if (increaseKey.GetKeyUp())
+            else if (increaseKey.GetKey())
             {
-                value = Math.Min(StickyUtilities.RoundUp(value, settings.Step * modifier), 1.0f);
+                float delta = Time.time - timeKeyDown;
+                if (delta < settings.MinTime)
+                {
+                    // Only move a single step
+                    float temp = tempValue + (settings.Step * modifier);
+                    value = Math.Min(temp, 1.0f);
+                }
+                else
+                {
+                    delta = Mathf.Pow(delta, settings.Exponent);
+
+                    float temp = tempValue + (settings.Speed * delta * modifier);
+                    temp = StickyUtilities.RoundUp(temp, settings.Step * modifier);
+                    value = Math.Min(temp, 1.0f);
+                }
             }
         }
 

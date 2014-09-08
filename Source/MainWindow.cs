@@ -119,7 +119,7 @@ namespace Tac.StickyControls
                     settings.Speed = newFloat;
                 }
                 GUILayout.EndHorizontal();
-                settings.Speed = StickyUtilities.RoundUp(GUILayout.HorizontalSlider(settings.Speed, 0.025f, 1.0f, GUILayout.ExpandWidth(true)), 0.025f);
+                settings.Speed = StickyUtilities.RoundUp(GUILayout.HorizontalSlider(settings.Speed, 0.025f, 2.0f, GUILayout.ExpandWidth(true)), 0.025f);
 
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Step", labelStyle, GUILayout.ExpandHeight(true));
@@ -138,6 +138,24 @@ namespace Tac.StickyControls
                 }
                 GUILayout.EndHorizontal();
                 settings.PrecisionControlsModifier = StickyUtilities.RoundUp(GUILayout.HorizontalSlider(settings.PrecisionControlsModifier, 0.005f, 0.25f, GUILayout.ExpandWidth(true)), 0.005f);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Minimum Time (s)", labelStyle, GUILayout.ExpandHeight(true));
+                if (float.TryParse(GUILayout.TextField(settings.MinTime.ToString("0.00"), GUILayout.ExpandWidth(true)), out newFloat))
+                {
+                    settings.MinTime = newFloat;
+                }
+                GUILayout.EndHorizontal();
+                settings.MinTime = StickyUtilities.RoundUp(GUILayout.HorizontalSlider(settings.MinTime, 0.01f, 0.5f, GUILayout.ExpandWidth(true)), 0.01f);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Exponent", labelStyle, GUILayout.ExpandHeight(true));
+                if (float.TryParse(GUILayout.TextField(settings.Exponent.ToString("0.00"), GUILayout.ExpandWidth(true)), out newFloat))
+                {
+                    settings.Exponent = newFloat;
+                }
+                GUILayout.EndHorizontal();
+                settings.Exponent = StickyUtilities.RoundUp(GUILayout.HorizontalSlider(settings.Exponent, 0.0f, 4.0f, GUILayout.ExpandWidth(true)), 0.05f);
 
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Zero Controls key", labelStyle);
