@@ -165,7 +165,7 @@ namespace Tac
                         {
                             Pitch = Math.Max(Pitch - (Speed * Time.deltaTime * modifier), -1.0f);
                         }
-                        if (GameSettings.PITCH_DOWN.GetKey())
+                        if (GameSettings.PITCH_DOWN.GetKeyUp())
                         {
                             Pitch = Math.Max(RoundDown(Pitch, Step * modifier), -1.0f);
                         }
@@ -174,7 +174,7 @@ namespace Tac
                         {
                             Roll = Math.Max(Roll - (Speed * Time.deltaTime * modifier), -1.0f);
                         }
-                        if (GameSettings.ROLL_LEFT.GetKey())
+                        if (GameSettings.ROLL_LEFT.GetKeyUp())
                         {
                             Roll = Math.Max(RoundDown(Roll, Step * modifier), -1.0f);
                         }
