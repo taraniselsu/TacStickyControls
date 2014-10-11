@@ -134,24 +134,16 @@ namespace Tac.StickyControls
                         roll.Zero();
                     }
 
+                    if (Input.GetKeyDown(settings.SetControlsKey) && !Input.GetKey(KeyCode.LeftAlt) && !Input.GetKey(KeyCode.RightAlt))
+                    {
+                        yaw.SetValue(currentVessel.ctrlState.yaw);
+                        pitch.SetValue(currentVessel.ctrlState.pitch);
+                        roll.SetValue(currentVessel.ctrlState.roll);
+                    }
+
                     if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(settings.ZeroControlsKey))
                     {
                         settings.Enabled = !settings.Enabled;
-
-                        if (settings.Enabled)
-                        {
-                            if (InputLockManager.GetControlLock(lockName) != desiredLock)
-                            {
-                                InputLockManager.SetControlLock(desiredLock, lockName);
-                            }
-                        }
-                        else
-                        {
-                            if (InputLockManager.GetControlLock(lockName) == desiredLock)
-                            {
-                                InputLockManager.RemoveControlLock(lockName);
-                            }
-                        }
                     }
 
                     if (settings.Enabled)
@@ -159,6 +151,18 @@ namespace Tac.StickyControls
                         yaw.Update();
                         pitch.Update();
                         roll.Update();
+
+                        if (InputLockManager.GetControlLock(lockName) != desiredLock)
+                        {
+                            InputLockManager.SetControlLock(desiredLock, lockName);
+                        }
+                    }
+                    else
+                    {
+                        if (InputLockManager.GetControlLock(lockName) == desiredLock)
+                        {
+                            InputLockManager.RemoveControlLock(lockName);
+                        }
                     }
                 }
             }

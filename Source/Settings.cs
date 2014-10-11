@@ -29,6 +29,7 @@ namespace Tac.StickyControls
         internal float Step { get; set; }
         internal float PrecisionControlsModifier { get; set; }
         internal string ZeroControlsKey { get; set; }
+        internal string SetControlsKey { get; set; }
         internal bool Enabled { get; set; }
 
         internal float MinTime { get; set; }
@@ -40,7 +41,8 @@ namespace Tac.StickyControls
             Speed = 1.0f;
             Step = 0.01f;
             PrecisionControlsModifier = 0.1f;
-            ZeroControlsKey = "z";
+            ZeroControlsKey = "`";
+            SetControlsKey = "y";
             Enabled = true;
 
             MinTime = 0.05f;
@@ -54,6 +56,7 @@ namespace Tac.StickyControls
             Enabled = Utilities.GetValue(config, "Enabled", Enabled);
             PrecisionControlsModifier = Utilities.GetValue(config, "PrecisionControlsModifier", PrecisionControlsModifier);
             ZeroControlsKey = Utilities.GetValue(config, "ZeroControlsKey", ZeroControlsKey);
+            SetControlsKey = Utilities.GetValue(config, "SetControlsKey", SetControlsKey);
 
             MinTime = Utilities.GetValue(config, "MinTime", MinTime);
             Exponent = Utilities.GetValue(config, "Exponent", Exponent);
@@ -66,6 +69,7 @@ namespace Tac.StickyControls
             config.AddValue("Enabled", Enabled);
             config.AddValue("PrecisionControlsModifier", PrecisionControlsModifier);
             config.AddValue("ZeroControlsKey", ZeroControlsKey);
+            config.AddValue("SetControlsKey", SetControlsKey);
 
             config.AddValue("MinTime", MinTime);
             config.AddValue("Exponent", Exponent);

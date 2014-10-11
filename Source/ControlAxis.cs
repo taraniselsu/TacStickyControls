@@ -110,5 +110,10 @@ namespace Tac.StickyControls
         {
             return value;
         }
+
+        internal void SetValue(float newValue)
+        {
+            value = newValue;
+        }
     }
 }

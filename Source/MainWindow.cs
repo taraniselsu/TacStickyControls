@@ -162,6 +162,11 @@ namespace Tac.StickyControls
                 settings.ZeroControlsKey = GUILayout.TextField(settings.ZeroControlsKey, GUILayout.ExpandWidth(true));
                 GUILayout.EndHorizontal();
 
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Set Controls key", labelStyle);
+                settings.SetControlsKey = GUILayout.TextField(settings.SetControlsKey, GUILayout.ExpandWidth(true));
+                GUILayout.EndHorizontal();
+
                 GUILayout.Space(10);
                 GUI.Label(new Rect(4, windowPos.height - 13, windowPos.width - 20, 12), "TAC Sticky Controls v" + version, versionStyle);
             }
