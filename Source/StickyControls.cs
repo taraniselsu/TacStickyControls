@@ -179,6 +179,9 @@ namespace Tac.StickyControls
                 state.yaw = yaw.GetValue();
                 state.pitch = pitch.GetValue();
                 state.roll = roll.GetValue();
+
+                state.wheelSteer = -state.yaw;
+                state.wheelThrottle = -state.pitch;
             }
         }
 
