@@ -95,9 +95,9 @@ namespace Tac.StickyControls
             GUILayout.EndVertical();
 
             GUILayout.BeginVertical();
-            GUILayout.Label(main.GetYaw().ToString("0.000"), valueStyle);
-            GUILayout.Label(main.GetPitch().ToString("0.000"), valueStyle);
-            GUILayout.Label(main.GetRoll().ToString("0.000"), valueStyle);
+            GUILayout.Label(main.GetYaw().ToString("0.000") + " (" + main.GetRawYaw().ToString("0.000") + ")", valueStyle);
+            GUILayout.Label(main.GetPitch().ToString("0.000") + " (" + main.GetRawPitch().ToString("0.000") + ")", valueStyle);
+            GUILayout.Label(main.GetRoll().ToString("0.000") + " (" + main.GetRawRoll().ToString("0.000") + ")", valueStyle);
             GUILayout.EndVertical();
 
             GUILayout.EndHorizontal();
@@ -112,6 +112,8 @@ namespace Tac.StickyControls
             if (showSettings)
             {
                 float newFloat;
+
+                // Movement scaling
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Speed", labelStyle, GUILayout.ExpandHeight(true));
                 if (float.TryParse(GUILayout.TextField(settings.Speed.ToString("0.000"), GUILayout.ExpandWidth(true)), out newFloat))
@@ -157,6 +159,26 @@ namespace Tac.StickyControls
                 GUILayout.EndHorizontal();
                 settings.Exponent = StickyUtilities.RoundUp(GUILayout.HorizontalSlider(settings.Exponent, 0.0f, 4.0f, GUILayout.ExpandWidth(true)), 0.05f);
 
+                // Position scaling
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Position Dead Zone", labelStyle, GUILayout.ExpandHeight(true));
+                if (float.TryParse(GUILayout.TextField(settings.PositionDeadZone.ToString("0.000"), GUILayout.ExpandWidth(true)), out newFloat))
+                {
+                    settings.PositionDeadZone = newFloat;
+                }
+                GUILayout.EndHorizontal();
+                settings.PositionDeadZone = StickyUtilities.RoundUp(GUILayout.HorizontalSlider(settings.PositionDeadZone, 0.005f, 0.25f, GUILayout.ExpandWidth(true)), 0.005f);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Position Exponent", labelStyle, GUILayout.ExpandHeight(true));
+                if (float.TryParse(GUILayout.TextField(settings.PositionExponent.ToString("0.00"), GUILayout.ExpandWidth(true)), out newFloat))
+                {
+                    settings.PositionExponent = newFloat;
+                }
+                GUILayout.EndHorizontal();
+                settings.PositionExponent = StickyUtilities.RoundUp(GUILayout.HorizontalSlider(settings.PositionExponent, 0.0f, 4.0f, GUILayout.ExpandWidth(true)), 0.05f);
+
+                // Key bindings
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Zero Controls key", labelStyle);
                 settings.ZeroControlsKey = GUILayout.TextField(settings.ZeroControlsKey, GUILayout.ExpandWidth(true));

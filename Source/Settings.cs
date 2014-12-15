@@ -35,6 +35,9 @@ namespace Tac.StickyControls
         internal float MinTime { get; set; }
         internal float Exponent { get; set; }
 
+        internal float PositionDeadZone { get; set; }
+        internal float PositionExponent { get; set; }
+
         internal Settings()
         {
             // Set defaults
@@ -47,6 +50,9 @@ namespace Tac.StickyControls
 
             MinTime = 0.05f;
             Exponent = 2.0f;
+
+            PositionDeadZone = 0.1f;
+            PositionExponent = 2.0f;
         }
 
         internal void Load(ConfigNode config)
@@ -60,6 +66,9 @@ namespace Tac.StickyControls
 
             MinTime = Utilities.GetValue(config, "MinTime", MinTime);
             Exponent = Utilities.GetValue(config, "Exponent", Exponent);
+
+            PositionDeadZone = Utilities.GetValue(config, "PositionDeadZone", PositionDeadZone);
+            PositionExponent = Utilities.GetValue(config, "PositionExponent", PositionExponent);
         }
 
         internal void Save(ConfigNode config)
@@ -73,6 +82,9 @@ namespace Tac.StickyControls
 
             config.AddValue("MinTime", MinTime);
             config.AddValue("Exponent", Exponent);
+
+            config.AddValue("PositionDeadZone", PositionDeadZone);
+            config.AddValue("PositionExponent", PositionExponent);
         }
     }
 }

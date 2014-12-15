@@ -108,10 +108,42 @@ namespace Tac.StickyControls
 
         internal float GetValue()
         {
-            return value;
+            if (value > settings.PositionDeadZone)
+            {
+                return Mathf.Pow((value - settings.PositionDeadZone) / (1 - settings.PositionDeadZone), settings.PositionExponent);
+            }
+            else if (value < -settings.PositionDeadZone)
+            {
+                return -Mathf.Pow((-value - settings.PositionDeadZone) / (1 - settings.PositionDeadZone), settings.PositionExponent);
+            }
+            else
+            {
+                return 0f;
+            }
         }
 
         internal void SetValue(float newValue)
+        {
+            if (newValue > 0f)
+            {
+                value = Mathf.Pow(newValue, 1f / settings.PositionExponent) * (1 - settings.PositionDeadZone) + settings.PositionDeadZone;
+            }
+            else if (newValue < 0f)
+            {
+                value = -Mathf.Pow(-newValue, 1f / settings.PositionExponent) * (1 - settings.PositionDeadZone) + settings.PositionDeadZone;
+            }
+            else
+            {
+                value = 0f;
+            }
+        }
+
+        internal float GetRawValue()
+        {
+            return value;
+        }
+
+        internal void SetRawValue(float newValue)
         {
             value = newValue;
         }

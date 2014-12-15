@@ -190,14 +190,29 @@ namespace Tac.StickyControls
             return yaw.GetValue();
         }
 
+        internal float GetRawYaw()
+        {
+            return yaw.GetRawValue();
+        }
+
         internal float GetPitch()
         {
             return pitch.GetValue();
         }
 
+        internal float GetRawPitch()
+        {
+            return pitch.GetRawValue();
+        }
+
         internal float GetRoll()
         {
             return roll.GetValue();
+        }
+
+        internal float GetRawRoll()
+        {
+            return roll.GetRawValue();
         }
 
         private void OnJustAboutToBeDestroyed()
