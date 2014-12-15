@@ -99,6 +99,15 @@ namespace Tac.StickyControls
                     value = Math.Min(temp, 1.0f);
                 }
             }
+
+            // If it went from one side to the other, i.e. positive -> negative or negative -> positive
+            if ((tempValue > 0 && value < 0) || (tempValue < 0 && value > 0))
+            {
+                // Reset the time
+                timeKeyDown = Time.time;
+                tempValue = 0f;
+                value = 0f;
+            }
         }
 
         internal void Zero()
