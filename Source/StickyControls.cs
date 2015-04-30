@@ -84,8 +84,11 @@ namespace Tac.StickyControls
         {
             if (vessel != null)
             {
-                vessel.OnFlyByWire += StickyFlyByWire;
+                vessel.OnFlyByWire += OnFlyByWire;
                 vessel.OnJustAboutToBeDestroyed += OnJustAboutToBeDestroyed;
+                vessel.OnPreAutopilotUpdate += OnPreAutopilotUpdate;
+                vessel.OnAutopilotUpdate += OnAutopilotUpdate;
+                vessel.OnPostAutopilotUpdate += OnPostAutopilotUpdate;
             }
         }
 
@@ -93,8 +96,11 @@ namespace Tac.StickyControls
         {
             if (vessel != null)
             {
-                vessel.OnFlyByWire -= StickyFlyByWire;
+                vessel.OnFlyByWire -= OnFlyByWire;
                 vessel.OnJustAboutToBeDestroyed -= OnJustAboutToBeDestroyed;
+                vessel.OnPreAutopilotUpdate -= OnPreAutopilotUpdate;
+                vessel.OnAutopilotUpdate -= OnAutopilotUpdate;
+                vessel.OnPostAutopilotUpdate -= OnPostAutopilotUpdate;
             }
         }
 
@@ -172,8 +178,10 @@ namespace Tac.StickyControls
             }
         }
 
-        private void StickyFlyByWire(FlightCtrlState state)
+        // Called first
+        private void OnPreAutopilotUpdate(FlightCtrlState state)
         {
+            //this.Log("OnPreAutopilotUpdate: " + state.yaw.ToString("0.000") + " / " + state.pitch.ToString("0.000") + " / " + state.roll.ToString("0.000"));
             if (settings.Enabled && currentVessel != null)
             {
                 state.yaw = yaw.GetValue();
@@ -183,6 +191,24 @@ namespace Tac.StickyControls
                 state.wheelSteer = -state.yaw;
                 state.wheelThrottle = -state.pitch;
             }
+        }
+
+        // Called second
+        private void OnAutopilotUpdate(FlightCtrlState state)
+        {
+            //this.Log("OnAutopilotUpdate: " + state.yaw.ToString("0.000") + " / " + state.pitch.ToString("0.000") + " / " + state.roll.ToString("0.000"));
+        }
+
+        // Called third
+        private void OnPostAutopilotUpdate(FlightCtrlState state)
+        {
+            //this.Log("OnPostAutopilotUpdate: " + state.yaw.ToString("0.000") + " / " + state.pitch.ToString("0.000") + " / " + state.roll.ToString("0.000"));
+        }
+
+        // Called fourth (last)
+        private void OnFlyByWire(FlightCtrlState state)
+        {
+            //this.Log("StickyFlyByWire: " + state.yaw.ToString("0.000") + " / " + state.pitch.ToString("0.000") + " / " + state.roll.ToString("0.000"));
         }
 
         internal float GetYaw()

@@ -62,11 +62,16 @@
     <Compile Include="Settings.cs" />
     <Compile Include="StickyUtilities.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\TacLib\Source\CommonProperties.proj">
+      <Link>CommonProperties.proj</Link>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\TacLib\Source\CommonProperties.proj" />
   <PropertyGroup>
     <AssemblyMajorVersion>0</AssemblyMajorVersion>
-    <AssemblyMinorVersion>2</AssemblyMinorVersion>
+    <AssemblyMinorVersion>3</AssemblyMinorVersion>
     <AssemblyBuildNumber>0</AssemblyBuildNumber>
     <AssemblyFileMajorVersion>$(AssemblyMajorVersion)</AssemblyFileMajorVersion>
     <AssemblyFileMinorVersion>$(AssemblyMinorVersion)</AssemblyFileMinorVersion>
@@ -78,8 +83,8 @@
     <ModUrl>http://ksp-avc.cybutek.net/version.php?id=21</ModUrl>
     <DownloadUrl>
     </DownloadUrl>
-    <KspVersionMajor>0</KspVersionMajor>
-    <KspVersionMinor>90</KspVersionMinor>
+    <KspVersionMajor>1</KspVersionMajor>
+    <KspVersionMinor>0</KspVersionMinor>
     <KspVersionPatch>0</KspVersionPatch>
   </PropertyGroup>
   <Target Name="BeforeBuild">
