@@ -42,17 +42,17 @@ namespace Tac.StickyControls
         {
             // Set defaults
             Speed = 1.0f;
-            Step = 0.01f;
+            Step = 0.025f;
             PrecisionControlsModifier = 0.1f;
             ZeroControlsKey = "`";
             SetControlsKey = "y";
             Enabled = true;
 
-            MinTime = 0.05f;
-            Exponent = 2.0f;
+            MinTime = 0.2f;
+            Exponent = 1.5f;
 
-            PositionDeadZone = 0.1f;
-            PositionExponent = 2.0f;
+            PositionDeadZone = 0.025f;
+            PositionExponent = 1.5f;
         }
 
         internal void Load(ConfigNode config)
