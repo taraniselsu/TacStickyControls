@@ -128,46 +128,57 @@ namespace Tac.StickyControls
                     {
                         if ((entry.Value & (ulong)desiredLock) != 0 && entry.Key != lockName)
                         {
-                            // Something else locked out the controls, so do not accept any input
+                            // Something else locked out the controls, do not accept any input
                             return;
                         }
                     }
 
-                    if (Input.GetKeyDown(settings.ZeroControlsKey) && !Input.GetKey(KeyCode.LeftAlt) && !Input.GetKey(KeyCode.RightAlt))
+                    if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
                     {
-                        yaw.Zero();
-                        pitch.Zero();
-                        roll.Zero();
-                    }
-
-                    if (Input.GetKeyDown(settings.SetControlsKey) && !Input.GetKey(KeyCode.LeftAlt) && !Input.GetKey(KeyCode.RightAlt))
-                    {
-                        yaw.SetValue(currentVessel.ctrlState.yaw);
-                        pitch.SetValue(currentVessel.ctrlState.pitch);
-                        roll.SetValue(currentVessel.ctrlState.roll);
-                    }
-
-                    if ((Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) && Input.GetKeyDown(settings.ZeroControlsKey))
-                    {
-                        settings.Enabled = !settings.Enabled;
-                    }
-
-                    if (settings.Enabled)
-                    {
-                        yaw.Update();
-                        pitch.Update();
-                        roll.Update();
-
-                        if (InputLockManager.GetControlLock(lockName) != desiredLock)
+                        // Do not lock the controls, the user might be trying to change the trim
+                        if (InputLockManager.GetControlLock(lockName) == desiredLock)
                         {
-                            InputLockManager.SetControlLock(desiredLock, lockName);
+                            InputLockManager.RemoveControlLock(lockName);
+                        }
+
+                        if (Input.GetKeyDown(settings.ZeroControlsKey))
+                        {
+                            settings.Enabled = !settings.Enabled;
                         }
                     }
                     else
                     {
-                        if (InputLockManager.GetControlLock(lockName) == desiredLock)
+                        if (Input.GetKeyDown(settings.ZeroControlsKey))
                         {
-                            InputLockManager.RemoveControlLock(lockName);
+                            yaw.Zero();
+                            pitch.Zero();
+                            roll.Zero();
+                        }
+
+                        if (Input.GetKeyDown(settings.SetControlsKey))
+                        {
+                            yaw.SetValue(currentVessel.ctrlState.yaw);
+                            pitch.SetValue(currentVessel.ctrlState.pitch);
+                            roll.SetValue(currentVessel.ctrlState.roll);
+                        }
+
+                        if (settings.Enabled)
+                        {
+                            yaw.Update();
+                            pitch.Update();
+                            roll.Update();
+
+                            if (InputLockManager.GetControlLock(lockName) != desiredLock)
+                            {
+                                InputLockManager.SetControlLock(desiredLock, lockName);
+                            }
+                        }
+                        else
+                        {
+                            if (InputLockManager.GetControlLock(lockName) == desiredLock)
+                            {
+                                InputLockManager.RemoveControlLock(lockName);
+                            }
                         }
                     }
                 }
@@ -184,9 +195,9 @@ namespace Tac.StickyControls
             //this.Log("OnPreAutopilotUpdate: " + state.yaw.ToString("0.000") + " / " + state.pitch.ToString("0.000") + " / " + state.roll.ToString("0.000"));
             if (settings.Enabled && currentVessel != null)
             {
-                state.yaw = yaw.GetValue();
-                state.pitch = pitch.GetValue();
-                state.roll = roll.GetValue();
+                state.yaw = state.yawTrim + yaw.GetValue();
+                state.pitch = state.pitchTrim + pitch.GetValue();
+                state.roll = state.rollTrim + roll.GetValue();
 
                 state.wheelSteer = -state.yaw;
                 state.wheelThrottle = -state.pitch;
